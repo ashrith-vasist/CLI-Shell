@@ -2,7 +2,7 @@ import cmd
 import os
 #print(dir(cmd.Cmd))
 class MyCommand(cmd.Cmd):
-    prompt = "(AshTheGr8t)>>>"
+    prompt = "(AshTheGrt)>>>"
     def do_exit(self,arg):
         """helps to quit CLI"""
         print("Bye bye")
@@ -33,8 +33,8 @@ class MyCommand(cmd.Cmd):
         path=os.getcwd();
         files=os.listdir(path)
         if(file_name in files):
-            c=open(file_name,'r')
-            print(str(c))
+            with open(file_name,'r') as f:
+                print(f.read())
         else:
             print("No such file exists")
     
@@ -47,20 +47,42 @@ class MyCommand(cmd.Cmd):
     def do_touch(self,file_name):
         """creates a file"""
         f=open(file_name,"x") 
+
     
+    # This function is ambigous still needs work
     def do_vi(self,file_name):
         """opens a file"""
         path=os.getcwd()
         files=os.listdir()
         if(file_name in files):
-            f=open(file_name,"a")
+            f = open(file_name, "r")
+            print(f.read())
         else:
             print("No such file exits")
 
-    #To do in the prjct 
-    #def do_clear(self,arg)
-    #def do_rm(self,args)
-    #give path to cd
-    #enhance vi functianlity
+    def do_clear(self,arg):
+        os.system("clear")
+
+    
+    
+    def do_rm(self,file_name):
+        path=os.getcwd();
+        files=os.listdir(path)
+        if(file_name in files):
+            os.remove(file_name)
+        else:
+            print("No such file exits")
+    
+    def do_rmdir(self,dirname):
+        path=os.getcwd()
+        dirn=os.listdir(path)
+        if(dirname in dirn):
+            os.rmdir(dirname)
+        else:
+            print("Directory does not exits")
+    
+###
+#Have to add piping
+
         
 MyCommand().cmdloop()
