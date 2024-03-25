@@ -1,8 +1,20 @@
 import cmd
 import os
-#print(dir(cmd.Cmd))
+import subprocess
+path=os.getcwd()
+
+
 class MyCommand(cmd.Cmd):
-    prompt = "(AshTheGrt)>>>"
+    
+    # Gets the return value from update_prompt() and updates the value
+    def __init__(self):
+        super().__init__()
+        self.prompt = self.update_prompt()
+
+    #Update the prompt to the new directory !!    
+    def update_prompt(self):
+        return f"AshShell:{os.getcwd()}$ "
+
     def do_exit(self,arg):
         """helps to quit CLI"""
         print("Bye bye")
@@ -20,13 +32,18 @@ class MyCommand(cmd.Cmd):
             print(x)
     def do_cd(self,dir_name):
         """To traverse through directories"""
-        path=os.getcwd()
-        files=os.listdir(path)
-        if(dir_name not in files):
+        
+        path = os.getcwd()
+        files = os.listdir(path)
+
+        if dir_name == "..":
+            parent_dir = os.path.dirname(path)
+            os.chdir(parent_dir)
+        elif dir_name not in files:
             print("No such directory present")
         else:
             os.chdir(dir_name)
-        
+        self.prompt = self.update_prompt() #calls the update_promtp function everytime it travers
     
     def do_cat(self,file_name):
         """give the contents of the file"""
@@ -50,15 +67,27 @@ class MyCommand(cmd.Cmd):
 
     
     # This function is ambigous still needs work
+    # def do_vi(self,file_name):
+    #     """opens a file"""
+    #     if os.path.isfile(file_name):
+    #         with open(file_name, "r") as file:
+    #             content = file.read()
+    #             print(content)
+    #             while True:
+    #                 new_content = input("Enter new content (or 'save' to save and exit): ")
+    #                 if new_content.lower() == 'save':
+    #                     with open(file_name, "w") as f:
+    #                         f.write(content)
+    #                     break
+    #                 content += new_content + '\n'
+    #     else:
+    #         print("No such file exists")
+        
     def do_vi(self,file_name):
-        """opens a file"""
-        path=os.getcwd()
-        files=os.listdir()
-        if(file_name in files):
-            f = open(file_name, "r")
-            print(f.read())
+        if os.path.isfile(file_name):
+            subprocess.run(["vi",file_name])
         else:
-            print("No such file exits")
+            print("No such file exists")
 
     def do_clear(self,arg):
         os.system("clear")
@@ -80,9 +109,11 @@ class MyCommand(cmd.Cmd):
             os.rmdir(dirname)
         else:
             print("Directory does not exits")
-    
+    def emptyline(self):
+        pass
 ###
 #Have to add piping
 
-        
-MyCommand().cmdloop()
+cli = MyCommand()      
+#cli.update_prompt()
+cli.cmdloop()
